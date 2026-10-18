@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useShop } from '../context/ShopContext';
 
 export default function Productos() {
+  const { productos, agregarAlCarritoGamer, rutaImagenProducto, cartCount } = useShop();
   const [newsletterEmail, setNewsletterEmail] = useState('');
-
-  const agregarAlCarritoGamer = (id) => {
-    console.log(`Añadiendo al carrito el producto ID: ${id}`);
-  };
 
   const handleNewsletterSubmit = (e) => {
     e.preventDefault();
-    console.log('Suscrito al boletín con:', newsletterEmail);
+    alert(`Suscrito al boletín con: ${newsletterEmail}`);
+    setNewsletterEmail('');
   };
 
   return (
@@ -34,7 +33,7 @@ export default function Productos() {
             <Link to="/registro">Registrar usuario</Link>
           </div>
           <Link to="/carrito" className="cart-btn">
-            🛒 Cart (<span id="cart-count">0</span>)
+            🛒 Cart (<span>{cartCount}</span>)
           </Link>
         </div>
       </header>
@@ -54,7 +53,7 @@ export default function Productos() {
 
           <div className="hero-image">
             <img
-              src="../mescla.jpg"
+              src="/mescla.jpg"
               alt="Escena gamer con control y audífonos luces neón"
               className="hero-img"
             />
@@ -64,159 +63,40 @@ export default function Productos() {
         {/* TÍTULO DE SECCIÓN */}
         <h1 className="page-title">CATÁLOGO DE VIDEOJUEGOS Y CONSOLAS</h1>
 
-        {/* GRILLA DE PRODUCTOS */}
+        {/* GRILLA DE PRODUCTOS DINÁMICA */}
         <div className="product-grid" id="all-products-container">
-          <div className="product-card">
-            <div className="img-box">
-              <img src="../play5.jpg" alt="Consola PlayStation 5 Sony Slim Digital" />
+          {productos.map((p) => (
+            <div key={p.id} className="product-card">
+              <Link to={`/producto/${p.id}`}>
+                <div className="img-box">
+                  <img
+                    src={rutaImagenProducto(p.imagen)}
+                    alt={p.nombre}
+                    onError={(e) => { e.target.src = '/play5.jpg'; }}
+                  />
+                </div>
+              </Link>
+              <h3 className="product-title">{p.nombre}</h3>
+              <div className="product-footer">
+                <span className="attributes">{p.categoria}</span>
+                <span className="price">${Number(p.precio).toLocaleString("es-CL")}</span>
+              </div>
+              <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+                <Link to={`/producto/${p.id}`} className="btn btn-outline" style={{ flex: 1 }}>
+                  Ver Detalle
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => agregarAlCarritoGamer(p.id)}
+                  disabled={p.stock <= 0}
+                  className="btn btn-primary"
+                  style={{ flex: 1 }}
+                >
+                  {p.stock <= 0 ? 'Agotado' : '🛒 Agregar'}
+                </button>
+              </div>
             </div>
-            <h3 className="product-title">PlayStation 5 Sony Slim Digital</h3>
-            <div className="product-footer">
-              <span className="attributes">Consola</span>
-              <span className="price">$499.999</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => agregarAlCarritoGamer(1)}
-              className="btn btn-primary btn-block"
-              style={{ marginTop: '10px' }}
-            >
-              🛒 Añadir al carrito
-            </button>
-          </div>
-
-          <div className="product-card">
-            <div className="img-box">
-              <img src="../switch2.jpg" alt="Consola Nintendo Switch 2 NS2 LCD" />
-            </div>
-            <h3 className="product-title">Consola Nintendo Switch 2 NS2 LCD</h3>
-            <div className="product-footer">
-              <span className="attributes">Consola</span>
-              <span className="price">$669.990</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => agregarAlCarritoGamer(2)}
-              className="btn btn-primary btn-block"
-              style={{ marginTop: '10px' }}
-            >
-              🛒 Añadir al carrito
-            </button>
-          </div>
-
-          <div className="product-card">
-            <div className="img-box">
-              <img src="../grandtheft.jpg" alt="Videojuego Grand Theft Auto VI PS5" />
-            </div>
-            <h3 className="product-title">PlayStation 5 Grand Theft Auto VI</h3>
-            <div className="product-footer">
-              <span className="attributes">Videojuego</span>
-              <span className="price">$94.990</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => agregarAlCarritoGamer(3)}
-              className="btn btn-primary btn-block"
-              style={{ marginTop: '10px' }}
-            >
-              🛒 Añadir al carrito
-            </button>
-          </div>
-
-          <div className="product-card">
-            <div className="img-box">
-              <img src="../1348.jpg" alt="Videojuego 1348 Ex Voto PS5" />
-            </div>
-            <h3 className="product-title">PlayStation 5 1348 Ex Voto</h3>
-            <div className="product-footer">
-              <span className="attributes">Videojuego</span>
-              <span className="price">$69.990</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => agregarAlCarritoGamer(4)}
-              className="btn btn-primary btn-block"
-              style={{ marginTop: '10px' }}
-            >
-              🛒 Añadir al carrito
-            </button>
-          </div>
-
-          <div className="product-card">
-            <div className="img-box">
-              <img src="../grandtheft.jpg" alt="Videojuego Grand Theft Auto VI Switch" />
-            </div>
-            <h3 className="product-title">Nintendo Switch Grand Theft Auto VI</h3>
-            <div className="product-footer">
-              <span className="attributes">Videojuego</span>
-              <span className="price">$24.990</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => agregarAlCarritoGamer(5)}
-              className="btn btn-primary btn-block"
-              style={{ marginTop: '10px' }}
-            >
-              🛒 Añadir al carrito
-            </button>
-          </div>
-
-          <div className="product-card">
-            <div className="img-box">
-              <img src="../ac3nswchico.jpg" alt="Videojuego Assassin's Creed III" />
-            </div>
-            <h3 className="product-title">Nintendo Switch Assassin's Creed III Remastered</h3>
-            <div className="product-footer">
-              <span className="attributes">Videojuego</span>
-              <span className="price">$94.990</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => agregarAlCarritoGamer(6)}
-              className="btn btn-primary btn-block"
-              style={{ marginTop: '10px' }}
-            >
-              🛒 Añadir al carrito
-            </button>
-          </div>
-
-          <div className="product-card">
-            <div className="img-box">
-              <img src="../Super-Pack-3-2.jpg" alt="Pack de videojuegos 9 en 1" />
-            </div>
-            <h3 className="product-title">9 JUEGOS EN 1 PACK MEGA NINTENDO SWITCH</h3>
-            <div className="product-footer">
-              <span className="attributes">Videojuego</span>
-              <span className="price">$80.000</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => agregarAlCarritoGamer(7)}
-              className="btn btn-primary btn-block"
-              style={{ marginTop: '10px' }}
-            >
-              🛒 Añadir al carrito
-            </button>
-          </div>
-
-          <div className="product-card">
-            <div className="img-box">
-              <img src="../mario.jpg" alt="Videojuego Super Mario Bros U Deluxe" />
-            </div>
-            <h3 className="product-title">Super Mario Bros U Deluxe Nintendo Switch</h3>
-            <div className="product-footer">
-              <span className="attributes">Videojuego</span>
-              <span className="price">$59.000</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => agregarAlCarritoGamer(8)}
-              className="btn btn-primary btn-block"
-              style={{ marginTop: '10px' }}
-            >
-              🛒 Añadir al carrito
-            </button>
-          </div>
+          ))}
         </div>
       </main>
 

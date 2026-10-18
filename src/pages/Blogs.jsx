@@ -36,31 +36,43 @@ export default function Blogs() {
         </p>
 
         <div className="blog-grid">
+          {/* PRIMERA NOTICIA */}
           <article className="blog-card">
             <img src="../blog-1.jpg" alt="Novedades del mundo gamer" className="blog-img" />
             <div className="blog-card-content">
               <h2>Las novedades que están marcando el mundo gamer</h2>
               <p>
-                Revisa algunas de las noticias y novedades más importantes
-                para los fanáticos de los videojuegos.
+                Sony ha patentado una tecnología que le sentaría genial a PS6.
               </p>
-              <Link to="/detalle-blog-1" className="btn btn-primary">
+              <a 
+                href="https://www.3djuegos.com/ps5/noticias/sony-ha-patentado-tecnologia-que-le-sentaria-genial-a-ps6" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="btn btn-primary"
+              >
                 Leer noticia
-              </Link>
+              </a>
             </div>
           </article>
 
+          {/* SEGUNDA NOTICIA */}
           <article className="blog-card">
             <img src="../blog1.jpg" alt="Guía de periféricos competitivos" className="blog-img" />
             <div className="blog-card-content">
-              <h2>Guía de periféricos competitivos</h2>
+              <h2>Últimas noticias de Videojuegos</h2>
               <p>
-                Conoce recomendaciones para mejorar tu setup y conseguir
-                un mejor rendimiento en tus partidas.
+                Descubre todas las novedades y la actualidad del mundo de los videojuegos. 
+                Mantente informado minuto a minuto sobre actualizaciones, fechas de lanzamiento,
+                 anuncios importantes y tráileres de tus títulos preferidos.
               </p>
-              <Link to="/detalle-blog-2" className="btn btn-primary">
+              <a 
+                href="https://vandal.elespanol.com/noticias/videojuegos" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="btn btn-primary"
+              >
                 Leer noticia
-              </Link>
+              </a>
             </div>
           </article>
         </div>

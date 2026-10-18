@@ -1,10 +1,55 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+// Datos simulados de Regiones y Comunas de Chile
+const regionesYComunas = {
+  "Región Metropolitana": ["Santiago", "Puente Alto", "Maipú", "La Florida"],
+  "Valparaíso": ["Valparaíso", "Viña del Mar", "Quilpué", "Villa Alemana"],
+  "Biobío": ["Concepción", "Talcahuano", "Los Ángeles", "San Pedro de la Paz"]
+};
+
+// --- FUNCIÓN PARA VALIDAR EL RUT CHILENO (Módulo 11) ---
+const validarRutChileno = (rutCompleto) => {
+  if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rutCompleto) && !/^[0-9]+[0-9kK]{1}$/.test(rutCompleto)) {
+    return false;
+  }
+  
+  // Limpiar puntos y guiones por si el usuario los pone
+  const rutLimpio = rutCompleto.replace(/[^0-9kK]/g, '').toUpperCase();
+  if (rutLimpio.length < 2) return false;
+
+  const cuerpo = rutLimpio.slice(0, -1);
+  const dv = rutLimpio.slice(-1);
+
+  let suma = 0;
+  let multiplo = 2;
+
+  for (let i = cuerpo.length - 1; i >= 0; i--) {
+    suma += multiplo * cuerpo.charAt(i);
+    multiplo = multiplo < 7 ? multiplo + 1 : 2;
+  }
+
+  const dvEsperado = 11 - (suma % 11);
+  let dvCalculado = dvEsperado === 11 ? '0' : dvEsperado === 10 ? 'K' : dvEsperado.toString();
+
+  return dvCalculado === dv;
+};
+
+// --- FUNCIÓN PARA VALIDAR EL CORREO ---
+const validarCorreo = (correo) => {
+  // Verifica que tenga @ y que termine en uno de los dominios solicitados
+  const regex = /^[a-zA-Z0-9._%+-]+@(duoc\.cl|profesor\.duoc\.cl|gmail\.com)$/i;
+  return regex.test(correo);
+};
+
 export default function Registro() {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
+  // Estado para simular una base de datos de usuarios
+  const [usuariosRegistrados, setUsuariosRegistrados] = useState([]);
+
+  // Estado inicial del formulario (lo guardamos en una constante para reutilizarlo al limpiar)
+  const initialState = {
     run: '',
     name: '',
     lastname: '',
@@ -14,22 +59,76 @@ export default function Registro() {
     region: '',
     comuna: '',
     address: '',
-  });
+  };
+
+  const [formData, setFormData] = useState(initialState);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
+    
+    setFormData((prev) => {
+      const newData = { ...prev, [id]: value };
+      if (id === 'region') newData.comuna = ''; // Reiniciar comuna si cambia la región
+      return newData;
+    });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Datos de registro:', formData);
-    // Lógica para enviar los datos de registro o redireccionar
-    // navigate('/login');
+    
+    // 1. Validar que no haya campos vacíos
+    if (Object.values(formData).some(value => value.trim() === '')) {
+      alert("Por favor, completa todos los campos del formulario.");
+      return;
+    }
+
+    // 2. Validar formato del RUT y Dígito Verificador
+    if (!validarRutChileno(formData.run)) {
+      alert("El RUT ingresado no es válido. Revisa el dígito verificador.");
+      return;
+    }
+
+    // 3. Validar el Correo Electrónico
+    if (!validarCorreo(formData.email)) {
+      alert("El correo debe contener un '@' y ser de dominio @duoc.cl, @profesor.duoc.cl o @gmail.com");
+      return;
+    }
+
+    // 4. Validar Contraseñas
+    if (formData.password !== formData.passConfirm) {
+      alert("Las contraseñas no coinciden.");
+      return;
+    }
+
+    if (formData.password.length < 4 || formData.password.length > 10) {
+      alert("La contraseña debe tener entre 4 y 10 caracteres.");
+      return;
+    }
+
+    // 5. Validar duplicidad de RUT o Correo
+    const existeUsuario = usuariosRegistrados.some(
+      (user) => user.run.toUpperCase() === formData.run.toUpperCase() || user.email.toLowerCase() === formData.email.toLowerCase()
+    );
+
+    if (existeUsuario) {
+      alert("Error: Ya existe una cuenta registrada con este RUT o Correo Electrónico.");
+      return;
+    }
+
+    // --- REGISTRO EXITOSO ---
+    // Guardar usuario en nuestra "base de datos" simulada
+    setUsuariosRegistrados(prev => [...prev, formData]);
+    
+    alert(`¡Registro exitoso! Bienvenido ${formData.name}`);
+    
+    // Limpiar los campos del formulario volviendo al estado inicial
+    setFormData(initialState);
+
+    // Si deseas redirigir después del éxito, descomenta esta línea:
+    // navigate('/login'); 
   };
+
+  const comunasDisponibles = formData.region ? regionesYComunas[formData.region] : [];
 
   return (
     <div>
@@ -49,7 +148,7 @@ export default function Registro() {
           <div className="card-header">REGISTRO DE USUARIO GAMER</div>
           <form id="user-form" onSubmit={handleSubmit} noValidate>
             <div className="form-group">
-              <label htmlFor="user-run">RUN (Sin puntos ni guión. Ej: 19011022K)</label>
+              <label htmlFor="run">RUN (Sin puntos ni guión. Ej: 19011022K)</label>
               <input
                 type="text"
                 id="run"
@@ -58,12 +157,11 @@ export default function Registro() {
                 value={formData.run}
                 onChange={handleChange}
               />
-              <span className="error-message" id="err-user-run"></span>
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="user-name">NOMBRE</label>
+                <label htmlFor="name">NOMBRE</label>
                 <input
                   type="text"
                   id="name"
@@ -71,10 +169,9 @@ export default function Registro() {
                   value={formData.name}
                   onChange={handleChange}
                 />
-                <span className="error-message" id="err-user-name"></span>
               </div>
               <div className="form-group">
-                <label htmlFor="user-lastname">APELLIDOS</label>
+                <label htmlFor="lastname">APELLIDOS</label>
                 <input
                   type="text"
                   id="lastname"
@@ -82,12 +179,11 @@ export default function Registro() {
                   value={formData.lastname}
                   onChange={handleChange}
                 />
-                <span className="error-message" id="err-user-lastname"></span>
               </div>
             </div>
 
             <div className="form-group">
-              <label htmlFor="user-email">CORREO (@duoc.cl, @profesor.duoc.cl, @gmail.com)</label>
+              <label htmlFor="email">CORREO (@duoc.cl, @profesor.duoc.cl, @gmail.com)</label>
               <input
                 type="email"
                 id="email"
@@ -95,12 +191,11 @@ export default function Registro() {
                 value={formData.email}
                 onChange={handleChange}
               />
-              <span className="error-message" id="err-user-email"></span>
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="user-pass">CONTRASEÑA (4 a 10 carac.)</label>
+                <label htmlFor="password">CONTRASEÑA (4 a 10 carac.)</label>
                 <input
                   type="password"
                   id="password"
@@ -108,10 +203,9 @@ export default function Registro() {
                   value={formData.password}
                   onChange={handleChange}
                 />
-                <span className="error-message" id="err-user-pass"></span>
               </div>
               <div className="form-group">
-                <label htmlFor="user-pass-confirm">CONFIRMAR CONTRASEÑA</label>
+                <label htmlFor="passConfirm">CONFIRMAR CONTRASEÑA</label>
                 <input
                   type="password"
                   id="passConfirm"
@@ -119,13 +213,12 @@ export default function Registro() {
                   value={formData.passConfirm}
                   onChange={handleChange}
                 />
-                <span className="error-message" id="err-user-pass-confirm"></span>
               </div>
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="user-region">Región</label>
+                <label htmlFor="region">Región</label>
                 <select
                   id="region"
                   className="form-control"
@@ -133,25 +226,34 @@ export default function Registro() {
                   onChange={handleChange}
                 >
                   <option value="">-- Seleccione la región --</option>
+                  {Object.keys(regionesYComunas).map((region) => (
+                    <option key={region} value={region}>
+                      {region}
+                    </option>
+                  ))}
                 </select>
-                <span className="error-message" id="err-user-region"></span>
               </div>
               <div className="form-group">
-                <label htmlFor="user-comuna">Comuna</label>
+                <label htmlFor="comuna">Comuna</label>
                 <select
                   id="comuna"
                   className="form-control"
                   value={formData.comuna}
                   onChange={handleChange}
+                  disabled={!formData.region}
                 >
                   <option value="">-- Seleccione la comuna --</option>
+                  {comunasDisponibles.map((comuna) => (
+                    <option key={comuna} value={comuna}>
+                      {comuna}
+                    </option>
+                  ))}
                 </select>
-                <span className="error-message" id="err-user-comuna"></span>
               </div>
             </div>
 
             <div className="form-group">
-              <label htmlFor="user-address">DIRECCIÓN DE DESPACHO</label>
+              <label htmlFor="address">DIRECCIÓN DE DESPACHO</label>
               <input
                 type="text"
                 id="address"
@@ -159,7 +261,6 @@ export default function Registro() {
                 value={formData.address}
                 onChange={handleChange}
               />
-              <span className="error-message" id="err-user-address"></span>
             </div>
 
             <button type="submit" className="btn btn-primary btn-block">

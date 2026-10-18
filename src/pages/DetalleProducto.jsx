@@ -1,11 +1,19 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
+import { useShop } from '../context/ShopContext';
 
 export default function DetalleProducto() {
+  const { id } = useParams(); // Obtiene el id desde la URL (/producto/1)
+  const { productos, agregarAlCarritoConCantidad, cartCount, rutaImagenProducto } = useShop();
   const [cantidad, setCantidad] = useState(1);
 
+  // Buscar el producto por su ID
+  const prod = productos.find(p => p.id === Number(id)) || productos[0];
+
   const handleAddToCart = () => {
-    console.log('Agregando al carrito:', cantidad);
+    if (prod) {
+      agregarAlCarritoConCantidad(prod.id, cantidad);
+    }
   };
 
   return (
@@ -26,57 +34,63 @@ export default function DetalleProducto() {
 
         <div className="header-right">
           <Link to="/carrito" className="cart-btn">
-            🛒 Cart (<span id="cart-count">0</span>)
+            🛒 Cart (<span>{cartCount}</span>)
           </Link>
         </div>
       </header>
 
       <main className="container">
         <div className="breadcrumb">
-          Home {' > '} Videojuegos {' > '} <span id="p-title-bread">Cargando...</span>
+          Home {' > '} Videojuegos {' > '} <span>{prod ? prod.nombre : 'Cargando...'}</span>
         </div>
 
-        <div className="product-detail-layout">
-          <div className="product-media">
-            <img
-              id="p-main-img"
-              src="https://via.placeholder.com/400?text=Cargando+Imagen"
-              alt="Imagen Juego"
-              className="main-detail-img"
-            />
-          </div>
-
-          <div className="product-info-box">
-            <h1 id="p-name">Cargando producto...</h1>
-            <div className="price" id="p-price">$0</div>
-            <p id="p-desc">
-              Sumérgete en una aventura épica con gráficos de última generación, historia inmersiva y un sistema de combate totalmente optimizado.
-            </p>
-
-            <p className="stock-info" style={{ color: '#ff4757', fontWeight: 'bold', marginBottom: '15px' }}>
-              Stock disponible: <span id="p-stock">Cargando...</span>
-            </p>
-
-            <div className="qty-selector">
-              <label htmlFor="p-qty">Unidades:</label>
-              <input
-                type="number"
-                id="p-qty"
-                value={cantidad}
-                min="1"
-                onChange={(e) => setCantidad(Number(e.target.value))}
+        {prod ? (
+          <div className="product-detail-layout">
+            <div className="product-media">
+              <img
+                src={rutaImagenProducto(prod.imagen)}
+                alt={prod.nombre}
+                className="main-detail-img"
               />
             </div>
 
-            <button
-              id="add-to-cart-btn"
-              className="btn btn-primary btn-block"
-              onClick={handleAddToCart}
-            >
-              Agregar al Carrito
-            </button>
+            <div className="product-info-box">
+              <h1>{prod.nombre}</h1>
+              <div className="price">${prod.precio.toLocaleString("es-CL")}</div>
+              <p>
+                Sumérgete en una aventura épica con gráficos de última generación, historia inmersiva y un sistema de combate totalmente optimizado.
+              </p>
+
+              <p className="stock-info" style={{ color: prod.stock > 0 ? '#2ed573' : '#ff4757', fontWeight: 'bold', marginBottom: '15px' }}>
+                Stock disponible: <span>{prod.stock} u.</span>
+              </p>
+
+              <div className="qty-selector">
+                <label htmlFor="p-qty">Unidades:</label>
+                <input
+                  type="number"
+                  id="p-qty"
+                  value={cantidad}
+                  min="1"
+                  max={prod.stock}
+                  disabled={prod.stock <= 0}
+                  onChange={(e) => setCantidad(Number(e.target.value))}
+                />
+              </div>
+
+              <button
+                type="button"
+                className="btn btn-primary btn-block"
+                disabled={prod.stock <= 0}
+                onClick={handleAddToCart}
+              >
+                {prod.stock <= 0 ? 'Agotado' : 'Agregar al Carrito'}
+              </button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <p>Producto no encontrado.</p>
+        )}
       </main>
     </div>
   );
