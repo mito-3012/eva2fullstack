@@ -1,111 +1,305 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap');
+
+/* ==========================================
+   VARIABLES Y ESTILOS BASE
+   ========================================== */
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+    --bg-dark: #0a0a12;
+    --bg-card: rgba(22, 22, 42, 0.85);
+    --primary-cyan: #00f0ff;
+    --primary-pink: #ff0055;
+    --text-main: #f0f0f8;
+    --text-muted: #8a8aa3;
+    --border-color: rgba(0, 240, 255, 0.2);
+    --neon-glow: 0 0 15px rgba(0, 240, 255, 0.4);
+    --pink-glow: 0 0 15px rgba(255, 0, 85, 0.4);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Rajdhani', 'Segoe UI', Tahoma, sans-serif;
 }
 
 body {
-  margin: 0;
+    background: var(--bg-dark);
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+.container {
+    width: 92%;
+    max-width: 1280px;
+    margin: 25px auto;
+    flex: 1;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+a {
+    text-decoration: none;
+    color: inherit;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
+/* ==========================================
+   HEADER Y NAVEGACIÓN
+   ========================================== */
+.main-header {
+    background: rgba(18, 18, 34, 0.95);
+    backdrop-filter: blur(12px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 5%;
+    border-bottom: 2px solid var(--primary-pink);
+    box-shadow: var(--pink-glow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+.logo h1 {
+    font-family: 'Orbitron', sans-serif;
+    color: #ffffff;
+    font-size: 1.8rem;
+    text-shadow: 0 0 10px var(--primary-pink);
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+.main-nav {
+    display: flex;
+    gap: 20px;
+}
+
+.main-nav a {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: 0.3s;
+}
+
+.main-nav a:hover, .main-nav a.active {
+    color: var(--primary-cyan);
+    text-shadow: 0 0 8px var(--primary-cyan);
+}
+
+/* ==========================================
+   FORMULARIOS Y CAMPOS
+   ========================================== */
+.form-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 550px;
+    margin: 20px auto;
+}
+
+.wide-card { max-width: 850px; }
+
+.form-group { margin-bottom: 18px; }
+
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+.form-row .form-group { flex: 1; }
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--primary-cyan);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    background: rgba(10, 10, 18, 0.9);
+    border: 1px solid var(--border-color);
+    color: #fff;
+    border-radius: 6px;
+    outline: none;
+    font-size: 0.95rem;
+}
+
+.form-control:focus {
+    border-color: var(--primary-cyan);
+    box-shadow: var(--neon-glow);
+}
+
+.form-control.is-invalid, .form-control.input-invalid {
+    border-color: var(--primary-pink) !important;
+}
+
+.error-message {
+    color: var(--primary-pink);
+    font-size: 0.8rem;
+    margin-top: 4px;
+    display: block;
+}
+
+/* ==========================================
+   BOTONES Y BADGES
+   ========================================== */
+.btn {
+    font-family: 'Orbitron', sans-serif;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-primary { background: var(--primary-cyan); color: #000; }
+.btn-primary:hover:not(:disabled) { background: #fff; box-shadow: var(--neon-glow); }
+
+.btn-secondary { background: var(--primary-pink); color: #fff; }
+.btn-secondary:hover:not(:disabled) { background: #ff3377; }
+
+.btn-outline {
+    border: 1px solid var(--primary-cyan);
+    color: var(--primary-cyan);
+    background: transparent;
+}
+.btn-outline:hover:not(:disabled) { background: var(--primary-cyan); color: #000; }
+
+.btn-action { padding: 6px 12px; border-radius: 4px; border: none; cursor: pointer; }
+.btn-delete { background: rgba(255, 0, 85, 0.2); color: var(--primary-pink); }
+.btn-delete:hover { background: var(--primary-pink); color: #fff; }
+
+/* NUEVO: Estilos para botones e inputs deshabilitados (Sin stock) */
+.btn:disabled, 
+button:disabled {
+    background: rgba(40, 40, 55, 0.6);
+    color: #555566;
+    cursor: not-allowed;
+    border: 1px solid #333344;
+    box-shadow: none;
+    pointer-events: none;
+}
+
+input:disabled {
+    background: rgba(20, 20, 30, 0.6);
+    color: #555566;
+    border-color: #333344;
+    cursor: not-allowed;
+}
+
+.badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
+.badge-admin { background: rgba(0, 240, 255, 0.2); color: var(--primary-cyan); }
+.badge-client { background: rgba(255, 255, 255, 0.1); color: #fff; }
+.badge-low { color: var(--primary-pink); font-weight: bold; }
+
+/* ==========================================
+   CATÁLOGO Y TARJETAS
+   ========================================== */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.product-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.product-card .img-box {
+    width: 100%;
+    height: 180px;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.product-card .img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-title {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--primary-cyan);
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+}
+
+.product-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.price { font-size: 1.2rem; color: var(--primary-pink); font-weight: bold; }
+.attributes { font-size: 0.75rem; color: var(--text-muted); background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; }
+
+/* ==========================================
+   LAYOUT DEL PANEL ADMINISTRATIVO
+   ========================================== */
+body.admin-body { display: flex; min-height: 100vh; flex-direction: row; }
+
+.sidebar {
+    width: 260px;
+    background: #0d0d18;
+    border-right: 1px solid var(--border-color);
+    padding: 25px 15px;
+}
+
+.sidebar-brand {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    color: var(--primary-pink);
+    margin-bottom: 30px;
+}
+
+.sidebar-nav a {
+    display: block;
+    padding: 12px;
+    color: var(--text-muted);
+    font-weight: bold;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.sidebar-nav a.active, .sidebar-nav a:hover {
+    background: rgba(0, 240, 255, 0.1);
+    color: var(--primary-cyan);
+}
+
+.admin-content { flex: 1; padding: 35px; }
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: var(--bg-card);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.data-table th, .data-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.data-table th {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--primary-cyan);
+    background: rgba(0, 0, 0, 0.4);
+    font-size: 0.8rem;
 }
