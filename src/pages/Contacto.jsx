@@ -1,104 +1,108 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
 
-export default function Contacto() {
-  const [formData, setFormData] = useState({
-    nombre: '',
-    correo: '',
-    comentario: '',
-  });
+// Vistas públicas
+import Home from './pages/Home';
+import Productos from './pages/Productos';
+import DetalleProducto from './pages/DetalleProducto';
+import Carrito from './pages/Carrito';
+import Login from './pages/Login';
+import Registro from './pages/Registro';
+import Nosotros from './pages/Nosotros';
+import Blogs from './pages/Blogs';
+import Contacto from './pages/Contacto';
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+// Vistas de administración
+import AdminHome from './pages/AdminHome';
+import AdminProductos from './pages/AdminProductos';
+import AdminUsuarios from './pages/AdminUsuarios';
+import AdminNuevoProducto from './pages/AdminNuevoProducto';
+import AdminNuevoUsuario from './pages/AdminNuevoUsuario';
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Mensaje de contacto listo para enviar:', formData);
-  };
+export default function App() {
+  
+  // Carga de inventario inicial por defecto
+  useEffect(() => {
+    const inventarioInicial = [
+      {
+        id: 'PS5-001',
+        nombre: 'Consola PlayStation 5',
+        desc: 'Consola de nueva generación ultra rápida.',
+        precio: 549990,
+        stock: 15,
+        stockCritico: 5,
+        categoria: 'PlayStation 5',
+        imagen: '/play5.jpg' //[cite: 3]
+      },
+      {
+        id: 'JUE-001',
+        nombre: 'Grand Theft Auto V',
+        desc: 'Aventura de mundo abierto aclamada por la crítica.',
+        precio: 29990,
+        stock: 8,
+        stockCritico: 10,
+        categoria: 'PlayStation 5',
+        imagen: '/grandtheft.jpg' //[cite: 3]
+      },
+      {
+        id: 'JUE-002',
+        nombre: 'Super Mario Bros. Wonder',
+        desc: 'Aventura clásica en 2D con un nuevo giro.',
+        precio: 49990,
+        stock: 20,
+        stockCritico: 5,
+        categoria: 'Nintendo Switch',
+        imagen: '/mario.jpg' //[cite: 3]
+      },
+      {
+        id: 'JUE-003',
+        nombre: 'Assassin\'s Creed III',
+        desc: 'Remasterización del clásico juego de acción y aventura.',
+        precio: 24990,
+        stock: 4,
+        stockCritico: 5,
+        categoria: 'Nintendo Switch',
+        imagen: '/ac3nswchico.jpg' //[cite: 3]
+      },
+      {
+        id: 'CON-002',
+        nombre: 'Nintendo Switch OLED',
+        desc: 'Consola híbrida con pantalla vibrante.',
+        precio: 349990,
+        stock: 12,
+        stockCritico: 5,
+        categoria: 'Nintendo Switch',
+        imagen: '/switch2.jpg' //[cite: 3]
+      }
+    ];
+
+    const productosGuardados = localStorage.getItem('productos');
+    
+    if (!productosGuardados || JSON.parse(productosGuardados).length === 0) {
+      localStorage.setItem('productos', JSON.stringify(inventarioInicial));
+      console.log('Inventario inicial cargado exitosamente.');
+    }
+  }, []);
 
   return (
-    <div>
-      <header className="main-header">
-        <div className="logo">
-          <span className="logo-icon">🎮</span>
-          <h1>GamerZone</h1>
-        </div>
+    <Routes>
+      {/* Rutas Públicas */}
+      <Route path="/" element={<Home />} />
+      <Route path="/productos" element={<Productos />} />
+      <Route path="/producto/:id" element={<DetalleProducto />} />
+      <Route path="/carrito" element={<Carrito />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/registro" element={<Registro />} />
+      <Route path="/nosotros" element={<Nosotros />} />
+      <Route path="/blogs" element={<Blogs />} />
+      <Route path="/contacto" element={<Contacto />} />
 
-        <nav className="main-nav">
-          <Link to="/">Home</Link>
-          <Link to="/productos">Catálogo</Link>
-          <Link to="/nosotros">Nosotros</Link>
-          <Link to="/blogs">Noticias</Link>
-          <Link to="/contacto" className="active">Contacto</Link>
-        </nav>
-
-        <div className="header-right">
-          <Link to="/carrito" className="cart-btn">
-            🛒 Cart (<span id="cart-count">0</span>)
-          </Link>
-        </div>
-      </header>
-
-      <main className="container flex-center">
-        <div className="form-card">
-          <div className="brand-box">
-            <span className="logo-icon">🎮</span>
-            <h2>GamerZone</h2>
-          </div>
-          <div className="card-header">CONTACTO GAMER</div>
-          <form id="contact-form" onSubmit={handleSubmit} noValidate>
-            <div className="form-group">
-              <label htmlFor="contact-name">NOMBRE COMPLETO</label>
-              <input
-                type="text"
-                id="contact-name"
-                name="nombre"
-                className="form-control"
-                autoComplete="name"
-                value={formData.nombre}
-                onChange={handleChange}
-              />
-              <span className="error-message" id="err-contact-name"></span>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="contact-email">CORREO</label>
-              <input
-                type="email"
-                id="contact-email"
-                name="correo"
-                className="form-control"
-                autoComplete="email"
-                value={formData.correo}
-                onChange={handleChange}
-              />
-              <span className="error-message" id="err-contact-email"></span>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="contact-msg">MENSAJE / CONSULTA</label>
-              <textarea
-                id="contact-msg"
-                name="comentario"
-                className="form-control"
-                rows="4"
-                value={formData.comentario}
-                onChange={handleChange}
-              ></textarea>
-              <span className="error-message" id="err-contact-msg"></span>
-            </div>
-
-            <button type="submit" className="btn btn-outline btn-block">
-              ENVIAR CONSULTA
-            </button>
-          </form>
-        </div>
-      </main>
-    </div>
+      {/* Rutas Admin */}
+      <Route path="/admin-home" element={<AdminHome />} />
+      <Route path="/admin-productos" element={<AdminProductos />} />
+      <Route path="/admin-usuarios" element={<AdminUsuarios />} />
+      <Route path="/admin-nuevo-producto" element={<AdminNuevoProducto />} />
+      <Route path="/admin-nuevo-usuario" element={<AdminNuevoUsuario />} />
+    </Routes>
   );
 }
