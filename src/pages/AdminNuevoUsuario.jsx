@@ -13,7 +13,10 @@ export default function AdminNuevoUsuario() {
     region: '',
     comuna: '',
     address: '',
+    // password: '', // Nota: Si el usuario va a iniciar sesión, probablemente necesites un campo para la contraseña
   });
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -29,9 +32,43 @@ export default function AdminNuevoUsuario() {
     navigate('/login');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Datos del usuario a guardar:', formData);
+    
+    // 1. Validación básica (puedes agregar más según necesites)
+    if (!formData.role || !formData.run || !formData.name || !formData.email) {
+      alert('Por favor, completa al menos los campos obligatorios (Rol, RUN, Nombre, Email).');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // 2. Enviar los datos al Backend
+      // REEMPLAZA la URL por la ruta real de tu API (ej: http://localhost:3000/api/usuarios)
+      const response = await fetch('http://tu-api-backend.com/api/usuarios', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Authorization': `Bearer ${localStorage.getItem('token')}` // Descomenta si usas JWT para autenticación
+        },
+        body: JSON.stringify(formData),
+      });
+
+      // 3. Manejar la respuesta
+      if (response.ok) {
+        alert('¡Usuario creado exitosamente!');
+        navigate('/admin-usuarios'); // Redirige a la lista de usuarios tras el éxito
+      } else {
+        const errorData = await response.json();
+        alert(`Error al crear el usuario: ${errorData.message || 'Intenta nuevamente.'}`);
+      }
+    } catch (error) {
+      console.error('Error de red al crear usuario:', error);
+      alert('Error de conexión. Verifica si el servidor está funcionando.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -64,7 +101,7 @@ export default function AdminNuevoUsuario() {
         <div className="form-card wide-card" style={{ marginTop: '25px' }}>
           <form id="user-admin-form" onSubmit={handleSubmit} noValidate>
             <div className="form-group">
-              <label htmlFor="admin-user-role">TIPO DE USUARIO (ROLES)</label>
+              <label htmlFor="role">TIPO DE USUARIO (ROLES)</label>
               <select
                 id="role"
                 className="form-control"
@@ -76,11 +113,10 @@ export default function AdminNuevoUsuario() {
                 <option value="Vendedor">Vendedor (Gestión de ventas)</option>
                 <option value="Cliente">Cliente Gamer</option>
               </select>
-              <span className="error-message" id="err-admin-user-role"></span>
             </div>
 
             <div className="form-group">
-              <label htmlFor="user-run">RUN (Sin puntos ni guión. Ej: 19011022K)</label>
+              <label htmlFor="run">RUN (Sin puntos ni guión. Ej: 19011022K)</label>
               <input
                 type="text"
                 id="run"
@@ -89,12 +125,11 @@ export default function AdminNuevoUsuario() {
                 value={formData.run}
                 onChange={handleChange}
               />
-              <span className="error-message" id="err-user-run"></span>
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="user-name">NOMBRE</label>
+                <label htmlFor="name">NOMBRE</label>
                 <input
                   type="text"
                   id="name"
@@ -103,10 +138,9 @@ export default function AdminNuevoUsuario() {
                   value={formData.name}
                   onChange={handleChange}
                 />
-                <span className="error-message" id="err-user-name"></span>
               </div>
               <div className="form-group">
-                <label htmlFor="user-lastname">APELLIDOS</label>
+                <label htmlFor="lastname">APELLIDOS</label>
                 <input
                   type="text"
                   id="lastname"
@@ -115,12 +149,11 @@ export default function AdminNuevoUsuario() {
                   value={formData.lastname}
                   onChange={handleChange}
                 />
-                <span className="error-message" id="err-user-lastname"></span>
               </div>
             </div>
 
             <div className="form-group">
-              <label htmlFor="user-email">CORREO ELECTRÓNICO</label>
+              <label htmlFor="email">CORREO ELECTRÓNICO</label>
               <input
                 type="email"
                 id="email"
@@ -129,12 +162,11 @@ export default function AdminNuevoUsuario() {
                 value={formData.email}
                 onChange={handleChange}
               />
-              <span className="error-message" id="err-user-email"></span>
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="user-region">Región</label>
+                <label htmlFor="region">Región</label>
                 <select
                   id="region"
                   className="form-control"
@@ -142,11 +174,12 @@ export default function AdminNuevoUsuario() {
                   onChange={handleChange}
                 >
                   <option value="">-- Seleccione --</option>
+                  {/* Aquí deberías mapear tus regiones */}
+                  <option value="RM">Metropolitana</option>
                 </select>
-                <span className="error-message" id="err-user-region"></span>
               </div>
               <div className="form-group">
-                <label htmlFor="user-comuna">Comuna</label>
+                <label htmlFor="comuna">Comuna</label>
                 <select
                   id="comuna"
                   className="form-control"
@@ -154,13 +187,14 @@ export default function AdminNuevoUsuario() {
                   onChange={handleChange}
                 >
                   <option value="">-- Seleccione --</option>
+                  {/* Aquí deberías mapear tus comunas dependiendo de la región */}
+                  <option value="Puente Alto">Puente Alto</option>
                 </select>
-                <span className="error-message" id="err-user-comuna"></span>
               </div>
             </div>
 
             <div className="form-group">
-              <label htmlFor="user-address">DIRECCIÓN</label>
+              <label htmlFor="address">DIRECCIÓN</label>
               <input
                 type="text"
                 id="address"
@@ -169,11 +203,14 @@ export default function AdminNuevoUsuario() {
                 value={formData.address}
                 onChange={handleChange}
               />
-              <span className="error-message" id="err-user-address"></span>
             </div>
 
-            <button type="submit" className="btn btn-primary btn-block">
-              GUARDAR USUARIO
+            <button 
+              type="submit" 
+              className="btn btn-primary btn-block" 
+              disabled={isLoading}
+            >
+              {isLoading ? 'GUARDANDO...' : 'GUARDAR USUARIO'}
             </button>
           </form>
         </div>

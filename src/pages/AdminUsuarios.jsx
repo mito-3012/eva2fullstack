@@ -10,6 +10,14 @@ export default function AdminUsuarios() {
     navigate('/login');
   };
 
+  // Función para simular el reseteo de la contraseña
+  const handleResetPassword = (nombre, run) => {
+    const confirmar = window.confirm(`¿Estás seguro de que deseas resetear la contraseña de ${nombre}?`);
+    if (confirmar) {
+      alert(`✅ La contraseña de ${nombre} ha sido reseteada.\nSu nueva clave temporal es su RUN: ${run}`);
+    }
+  };
+
   return (
     <div className="admin-body">
       <aside className="sidebar">
@@ -61,28 +69,85 @@ export default function AdminUsuarios() {
                 <th>RUN</th>
                 <th>Nombre</th>
                 <th>Correo</th>
+                <th>Contraseña</th> {/* Nueva columna */}
                 <th>Perfil</th>
                 <th>Región / Comuna</th>
+                <th>Acciones</th> {/* Columna de botones */}
               </tr>
             </thead>
             <tbody id="admin-users-table">
+              {/* Usuario 1: Administrador */}
               <tr>
                 <td>19011022K</td>
                 <td>Gonzalo Gamer</td>
                 <td>gonzalo@duoc.cl</td>
+                <td style={{ letterSpacing: '2px' }}>********</td>
                 <td>
                   <span className="badge badge-admin">Administrador</span>
                 </td>
                 <td>Región Metropolitana / Santiago</td>
+                <td>
+                  <div style={{ display: 'flex', gap: '5px' }}>
+                    <button 
+                      className="btn btn-sm btn-secondary" 
+                      onClick={() => handleResetPassword('Gonzalo Gamer', '19011022K')}
+                      style={{ backgroundColor: '#17a2b8' }}
+                    >
+                      🔑 Resetear Clave
+                    </button>
+                    <button className="btn btn-sm btn-danger">🗑️</button>
+                  </div>
+                </td>
               </tr>
+
+              {/* Usuario 2: Cliente */}
               <tr>
                 <td>201234567</td>
                 <td>Camila Player</td>
                 <td>camila@gmail.com</td>
+                <td style={{ letterSpacing: '2px' }}>********</td>
                 <td>
                   <span className="badge badge-client">Cliente</span>
                 </td>
                 <td>Región de la Araucanía / Temuco</td>
+                <td>
+                  <div style={{ display: 'flex', gap: '5px' }}>
+                    <button 
+                      className="btn btn-sm btn-secondary"
+                      onClick={() => handleResetPassword('Camila Player', '201234567')}
+                      style={{ backgroundColor: '#17a2b8' }}
+                    >
+                      🔑 Resetear Clave
+                    </button>
+                    <button className="btn btn-sm btn-danger">🗑️</button>
+                  </div>
+                </td>
+              </tr>
+
+              {/* Usuario 3: Empleado / Vendedor */}
+              <tr>
+                <td>156667778</td>
+                <td>Carlos Vendedor</td>
+                <td>carlos@tiendagamer.cl</td>
+                <td style={{ letterSpacing: '2px' }}>********</td>
+                <td>
+                  <span className="badge badge-warning" style={{ backgroundColor: '#ffc107', color: '#000', padding: '4px 8px', borderRadius: '4px' }}>
+                    Vendedor
+                  </span>
+                </td>
+                <td>Región de Valparaíso / Viña del Mar</td>
+                <td>
+                  <div style={{ display: 'flex', gap: '5px' }}>
+                    <button 
+                      className="btn btn-sm btn-secondary"
+                      onClick={() => handleResetPassword('Carlos Vendedor', '156667778')}
+                      style={{ backgroundColor: '#17a2b8' }}
+                    >
+                      🔑 Resetear Clave
+                    </button>
+                    <button className="btn btn-sm btn-danger">🗑️</button>
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>

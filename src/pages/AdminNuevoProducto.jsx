@@ -30,7 +30,44 @@ export default function AdminNuevoProducto() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Datos del producto a guardar:', formData);
+    
+    // 1. Validación básica para no guardar productos vacíos
+    if (!formData.code || !formData.name || !formData.price || !formData.stock) {
+      alert('Por favor completa los campos obligatorios: Código, Título, Precio y Stock.');
+      return;
+    }
+
+    // 2. Preparamos el objeto con los nombres de propiedades que lee tu tabla
+    const nuevoProducto = {
+      id: formData.code,
+      nombre: formData.name, 
+      desc: formData.desc,
+      precio: parseFloat(formData.price),
+      stock: parseInt(formData.stock, 10),
+      stockCritico: formData.criticalStock ? parseInt(formData.criticalStock, 10) : 5,
+      categoria: formData.category || 'General'
+    };
+
+    // 3. Obtenemos lo que ya existe en el localStorage
+    let productosActuales = [];
+    try {
+      const data = localStorage.getItem('productos');
+      if (data) {
+        productosActuales = JSON.parse(data);
+      }
+    } catch (error) {
+      console.error('Error al leer productos', error);
+    }
+
+    // 4. Agregamos el nuevo producto al arreglo
+    productosActuales.push(nuevoProducto);
+
+    // 5. Guardamos el arreglo actualizado en el localStorage
+    localStorage.setItem('productos', JSON.stringify(productosActuales));
+
+    // 6. Mensaje de éxito y redirección automática al inventario
+    alert('¡Juego registrado con éxito!');
+    navigate('/admin-productos');
   };
 
   return (
@@ -63,7 +100,7 @@ export default function AdminNuevoProducto() {
         <div className="form-card wide-card" style={{ marginTop: '25px' }}>
           <form id="product-form" onSubmit={handleSubmit} noValidate>
             <div className="form-group">
-              <label htmlFor="prod-code">CÓDIGO PRODUCTO (Mín. 3 carac. Ej: PS5-001)</label>
+              <label htmlFor="code">CÓDIGO PRODUCTO (Mín. 3 carac. Ej: PS5-001)</label>
               <input
                 type="text"
                 id="code"
@@ -72,11 +109,10 @@ export default function AdminNuevoProducto() {
                 value={formData.code}
                 onChange={handleChange}
               />
-              <span className="error-message" id="err-prod-code"></span>
             </div>
 
             <div className="form-group">
-              <label htmlFor="prod-name">TÍTULO DEL JUEGO / PRODUCTO (Máx 100)</label>
+              <label htmlFor="name">TÍTULO DEL JUEGO / PRODUCTO (Máx 100)</label>
               <input
                 type="text"
                 id="name"
@@ -85,11 +121,10 @@ export default function AdminNuevoProducto() {
                 value={formData.name}
                 onChange={handleChange}
               />
-              <span className="error-message" id="err-prod-name"></span>
             </div>
 
             <div className="form-group">
-              <label htmlFor="prod-desc">SINOPSIS / DESCRIPCIÓN (Opcional - Máx 500)</label>
+              <label htmlFor="desc">SINOPSIS / DESCRIPCIÓN (Opcional - Máx 500)</label>
               <textarea
                 id="desc"
                 className="form-control"
@@ -98,12 +133,11 @@ export default function AdminNuevoProducto() {
                 value={formData.desc}
                 onChange={handleChange}
               ></textarea>
-              <span className="error-message" id="err-prod-desc"></span>
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="prod-price">PRECIO ($ &gt;= 0)</label>
+                <label htmlFor="price">PRECIO ($ &gt;= 0)</label>
                 <input
                   type="number"
                   id="price"
@@ -113,11 +147,10 @@ export default function AdminNuevoProducto() {
                   value={formData.price}
                   onChange={handleChange}
                 />
-                <span className="error-message" id="err-prod-price"></span>
               </div>
 
               <div className="form-group">
-                <label htmlFor="prod-stock">STOCK (Entero &gt;= 0)</label>
+                <label htmlFor="stock">STOCK (Entero &gt;= 0)</label>
                 <input
                   type="number"
                   id="stock"
@@ -126,11 +159,10 @@ export default function AdminNuevoProducto() {
                   value={formData.stock}
                   onChange={handleChange}
                 />
-                <span className="error-message" id="err-prod-stock"></span>
               </div>
 
               <div className="form-group">
-                <label htmlFor="prod-critical">STOCK CRÍTICO (Opcional)</label>
+                <label htmlFor="criticalStock">STOCK CRÍTICO (Opcional)</label>
                 <input
                   type="number"
                   id="criticalStock"
@@ -139,12 +171,11 @@ export default function AdminNuevoProducto() {
                   value={formData.criticalStock}
                   onChange={handleChange}
                 />
-                <span className="error-message" id="err-prod-critical"></span>
               </div>
             </div>
 
             <div className="form-group">
-              <label htmlFor="prod-cat">CATEGORÍA / PLATAFORMA</label>
+              <label htmlFor="category">CATEGORÍA / PLATAFORMA</label>
               <select
                 id="category"
                 className="form-control"
@@ -158,7 +189,6 @@ export default function AdminNuevoProducto() {
                 <option value="PC Gaming">PC Gaming</option>
                 <option value="Accesorios">Accesorios &amp; Periféricos</option>
               </select>
-              <span className="error-message" id="err-prod-cat"></span>
             </div>
 
             <button type="submit" className="btn btn-primary btn-block">

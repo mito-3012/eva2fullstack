@@ -19,9 +19,34 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Iniciando sesión con:', formData);
-    // Aquí puedes integrar la lógica con auth.js o redirigir
-    // navigate('/admin-home'); // o navigate('/');
+    const { email, password } = formData;
+
+    // Validación de campos vacíos
+    if (!email || !password) {
+      alert('Por favor, ingresa tu correo y contraseña.');
+      return;
+    }
+
+    // --- SIMULACIÓN DE LOGIN ---
+    // Credenciales del Administrador (usando los datos del mantenedor)
+    if (email === 'gonzalo@duoc.cl' && password === '19011022K') {
+      alert('¡Bienvenido Administrador!');
+      navigate('/admin-home'); // Redirige al panel de administración
+    } 
+    // Credenciales del Cliente
+    else if (email === 'camila@gmail.com' && password === '201234567') {
+      alert('¡Bienvenida Camila!');
+      navigate('/'); // Redirige a la tienda principal
+    } 
+    // Credenciales del Vendedor
+    else if (email === 'carlos@tiendagamer.cl' && password === '156667778') {
+      alert('¡Bienvenido Carlos!');
+      navigate('/admin-home'); // Redirige a su panel correspondiente
+    } 
+    // Si las credenciales no coinciden
+    else {
+      alert('Correo o contraseña incorrectos. Inténtalo de nuevo.');
+    }
   };
 
   return (
@@ -63,7 +88,7 @@ export default function Login() {
                 id="login-email"
                 name="email"
                 className="form-control"
-                placeholder="gamer@duoc.cl"
+                placeholder="gonzalo@duoc.cl"
                 autoComplete="email"
                 value={formData.email}
                 onChange={handleChange}
@@ -78,6 +103,7 @@ export default function Login() {
                 id="login-pass"
                 name="password"
                 className="form-control"
+                placeholder="Tu contraseña (Ej: RUN)"
                 autoComplete="current-password"
                 value={formData.password}
                 onChange={handleChange}

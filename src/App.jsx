@@ -32,12 +32,12 @@ export default function App() {
       <Route path="/blogs" element={<Blogs />} />
       <Route path="/contacto" element={<Contacto />} />
 
-      {/* Rutas Admin */}
-      <Route path="/admin" element={<AdminHome />} />
-      <Route path="/admin/productos" element={<AdminProductos />} />
-      <Route path="/admin/usuarios" element={<AdminUsuarios />} />
-      <Route path="/admin/nuevo-producto" element={<AdminNuevoProducto />} />
-      <Route path="/admin/nuevo-usuario" element={<AdminNuevoUsuario />} />
+      {/* Rutas Admin (Corregidas con guiones para que coincidan con tus links) */}
+      <Route path="/admin-home" element={<AdminHome />} />
+      <Route path="/admin-productos" element={<AdminProductos />} />
+      <Route path="/admin-usuarios" element={<AdminUsuarios />} />
+      <Route path="/admin-nuevo-producto" element={<AdminNuevoProducto />} />
+      <Route path="/admin-nuevo-usuario" element={<AdminNuevoUsuario />} />
     </Routes>
   );
 }

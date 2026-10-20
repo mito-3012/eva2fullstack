@@ -1,8 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function AdminHome() {
   const navigate = useNavigate();
+
+  const [stats, setStats] = useState({
+    totalProducts: 0,
+    lowStock: 0,
+    cartItems: 0
+  });
+
+  // 1. Nuevo estado para guardar y mostrar la lista del inventario
+  const [productos, setProductos] = useState([]);
+
+  useEffect(() => {
+    let storedProducts = [];
+    let storedCart = [];
+
+    try {
+      const prodData = localStorage.getItem('productos');
+      const cartData = localStorage.getItem('carrito');
+
+      if (prodData) storedProducts = JSON.parse(prodData);
+      if (cartData) storedCart = JSON.parse(cartData);
+    } catch (error) {
+      console.error('Error al leer el localStorage:', error);
+    }
+
+    if (!Array.isArray(storedProducts)) storedProducts = [];
+    if (!Array.isArray(storedCart)) storedCart = [];
+
+    const total = storedProducts.length;
+    const low = storedProducts.filter(producto => producto.stock < 10).length;
+    const cartCount = storedCart.reduce((acc, item) => acc + (item.cantidad || 1), 0);
+
+    setStats({
+      totalProducts: total, 
+      lowStock: low,           
+      cartItems: cartCount 
+    });
+
+    // 2. Guardamos los productos encontrados para mostrarlos en la tabla
+    setProductos(storedProducts);
+  }, []);
 
   const cerrarSesionGamer = (e) => {
     e.preventDefault();
@@ -37,7 +77,7 @@ export default function AdminHome() {
           Resumen en tiempo real del estado de la tienda.
         </p>
 
-        {/* TARJETAS DE ESTADÍSTICAS SINCRO CON APP.JS */}
+        {/* SECCIÓN 1: TARJETAS DEL DASHBOARD */}
         <div
           style={{
             display: 'grid',
@@ -49,7 +89,6 @@ export default function AdminHome() {
           <div className="form-card" style={{ margin: 0, textAlign: 'center' }}>
             <h3 style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>TOTAL PRODUCTOS</h3>
             <p
-              id="dash-total-products"
               style={{
                 fontFamily: "'Orbitron', sans-serif",
                 fontSize: '2.5rem',
@@ -57,7 +96,7 @@ export default function AdminHome() {
                 marginTop: '10px',
               }}
             >
-              0
+              {stats.totalProducts}
             </p>
           </div>
 
@@ -66,7 +105,6 @@ export default function AdminHome() {
               STOCK BAJO (&lt; 10 u.)
             </h3>
             <p
-              id="dash-low-stock"
               style={{
                 fontFamily: "'Orbitron', sans-serif",
                 fontSize: '2.5rem',
@@ -74,14 +112,13 @@ export default function AdminHome() {
                 marginTop: '10px',
               }}
             >
-              0
+              {stats.lowStock}
             </p>
           </div>
 
           <div className="form-card" style={{ margin: 0, textAlign: 'center' }}>
             <h3 style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>ITEMS EN CARRITOS</h3>
             <p
-              id="dash-cart-items"
               style={{
                 fontFamily: "'Orbitron', sans-serif",
                 fontSize: '2.5rem',
@@ -89,9 +126,49 @@ export default function AdminHome() {
                 marginTop: '10px',
               }}
             >
-              0
+              {stats.cartItems}
             </p>
           </div>
+        </div>
+
+        {/* SECCIÓN 2: TABLA DE INVENTARIO */}
+        <div style={{ marginTop: '50px' }}>
+          <h2 style={{ fontFamily: "'Orbitron', sans-serif", color: 'var(--primary-cyan)', marginBottom: '20px' }}>
+            📦 INVENTARIO ACTUAL
+          </h2>
+          
+          {productos.length === 0 ? (
+            <p style={{ color: 'var(--text-muted)' }}>No hay productos registrados en el inventario.</p>
+          ) : (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', color: '#fff', backgroundColor: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px' }}>
+                <thead>
+                  <tr style={{ borderBottom: '2px solid var(--primary-cyan)' }}>
+                    <th style={{ padding: '15px' }}>ID</th>
+                    <th style={{ padding: '15px' }}>Nombre</th>
+                    <th style={{ padding: '15px' }}>Precio</th>
+                    <th style={{ padding: '15px' }}>Stock</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {productos.map((prod, index) => (
+                    <tr key={index} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                      <td style={{ padding: '15px' }}>{prod.id || index + 1}</td>
+                      <td style={{ padding: '15px' }}>{prod.nombre || prod.titulo}</td>
+                      <td style={{ padding: '15px' }}>${prod.precio}</td>
+                      <td style={{ 
+                        padding: '15px', 
+                        color: prod.stock < 10 ? 'var(--primary-pink)' : '#fff',
+                        fontWeight: prod.stock < 10 ? 'bold' : 'normal'
+                      }}>
+                        {prod.stock} {prod.stock < 10 && '⚠️'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </main>
     </div>
